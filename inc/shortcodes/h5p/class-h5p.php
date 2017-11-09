@@ -33,6 +33,28 @@ class H5P {
 	/**
 	 * @see \H5P_Plugin::shortcode
 	 *
+	 * @param int $h5p_id
+	 *
+	 * @return array
+	 */
+	public function getContent( $h5p_id ) {
+		$found = [];
+		try {
+			if ( class_exists( '\H5P_Plugin' ) ) {
+				$content = \H5P_Plugin::get_instance()->get_content( $h5p_id );
+				if ( is_array( $content ) ) {
+					$found = $content;
+				}
+			}
+		} catch ( \Exception $e ) {
+			// Do nothing
+		}
+		return $found;
+	}
+
+	/**
+	 * @see \H5P_Plugin::shortcode
+	 *
 	 * @param array $atts
 	 *
 	 * @return string
@@ -59,17 +81,10 @@ class H5P {
 
 		$h5p_id = isset( $atts['id'] ) ? intval( $atts['id'] ) : 0;
 
-		// H5P Content
 		if ( $h5p_id ) {
-			try {
-				if ( class_exists( '\H5P_Plugin' ) ) {
-					$content = \H5P_Plugin::get_instance()->get_content( $h5p_id );
-					if ( is_array( $content ) && ! empty( $content['title'] ) ) {
-						$h5p_title = $content['title'];
-					}
-				}
-			} catch ( \Exception $e ) {
-				// Do nothing
+			$content = $this->getContent( $h5p_id );
+			if ( ! empty( $content['title'] ) ) {
+				$h5p_title = $content['title'];
 			}
 		}
 
