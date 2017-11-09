@@ -53,6 +53,24 @@ class H5P {
 	}
 
 	/**
+	 * @see \H5P_Plugin::get_content_settings
+	 *
+	 * @param int $h5p_id
+	 *
+	 * @return string
+	 */
+	public function getExportUrl( $h5p_id ) {
+
+		$url = '';
+		if ( get_option( 'h5p_export', true ) && class_exists( '\H5P_Plugin' ) ) {
+			$content = $this->getContent( $h5p_id );
+			$url = \H5P_Plugin::get_instance()->get_h5p_url() . '/exports/' . ( $content['slug'] ? $content['slug'] . '-' : '' ) . $content['id'] . '.h5p';
+		}
+
+		return $url;
+	}
+
+	/**
 	 * @see \H5P_Plugin::shortcode
 	 *
 	 * @param array $atts
